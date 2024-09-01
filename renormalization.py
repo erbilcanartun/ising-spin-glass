@@ -3,23 +3,61 @@ import numpy as np
 import mpmath as mp
 
 def matrix_normalizer(t):
+    """
+    Normalize a matrix by dividing each element by the maximum value in the matrix.
+    Parameters:
+    t (numpy.ndarray): The input matrix.
+    Returns:
+    numpy.ndarray: The normalized matrix.
+    """
     return t / np.amax(t)
 
-def interaction(t): # mpmath
+def interaction(t):
+    """
+        Calculate the interaction between two elements of a matrix.
+        Parameters:
+        t (mpmath.matrix): A 2x2 matrix representing the transfer matrix.
+        Returns:
+        mpmath.mpf: The calculated interaction value or coupling constant.
+        """
     return mp.log(t[0, 0] / t[0, 1]) / 2
 
-def transfer_matrix(interaction): # mpmath
+def transfer_matrix(interaction):
+    """
+    Calculates the transfer matrix for the Ising spin glass model.
+    Parameters:
+    interaction (float): The interaction strength between spins.
+    Returns:
+    numpy.ndarray: The normalized transfer matrix.
+    """
     j = mp.mpf(interaction)
     t = mp.matrix([[mp.exp(j), mp.exp(-j)],
                    [mp.exp(-j), mp.exp(j)]])
     return matrix_normalizer(t)
 
 def transfer_matrices(lattice_size, interaction, aferro_concentration):
+    """
+    Generates a list of transfer matrices based on the lattice size, interaction strength, and antiferromagnetic bond concentration.
+    Parameters:
+    lattice_size (int): The size of the lattice.
+    interaction (float): The strength of the interaction.
+    aferro_concentration (float): The concentration of antiferromagnetic interactions.
+    Returns:
+    list: A list of transfer matrices.
+    """
     ferro  = transfer_matrix(interaction)
     aferro = transfer_matrix(-interaction)
     return [ferro for _ in range(int((1 - aferro_concentration) * lattice_size))] + [aferro for _ in range(int(aferro_concentration * lattice_size))]
 
-def mp_multiply(t1, t2): # mpmath
+def mp_multiply(t1, t2):
+    """
+    Multiplies two matrices element-wise and returns the result.
+    Parameters:
+    t1 (mp.matrix): The first matrix.
+    t2 (mp.matrix): The second matrix.
+    Returns:
+    mp.matrix: The element-wise product of t1 and t2.
+    """
     n = len(t1)
     t = mp.matrix(n)
     for i in range(n):
@@ -27,7 +65,14 @@ def mp_multiply(t1, t2): # mpmath
             t[i, j] = t1[i, j] * t2[i, j]
     return matrix_normalizer(t)
 
-def bond_moving(matrices): # mpmath
+def bond_moving(matrices):
+    """
+    Perform bond moving operation on a list of matrices.
+    Parameters:
+    matrices (list): A list of matrices.
+    Returns:
+    matrix: The result of the bond moving operation.
+    """
     t = matrices[0]
     n = len(matrices)
     for i in range(n - 1):
@@ -35,32 +80,65 @@ def bond_moving(matrices): # mpmath
     return matrix_normalizer(t)
 
 def decimation(matrices):
-    t = matrices[0] * matrices[1] # mpmath (np.dot karşılığı)
+    """
+    Applies decimation to a list of matrices.
+    Parameters:
+    matrices (list): A list of matrices.
+    Returns:
+    matrix: The result of applying decimation to the matrices.
+    """
+    t = matrices[0] * matrices[1]
+    t = matrices[0] * matrices[1]
     t = matrix_normalizer(t)    
     t = t * matrices[2]
     return matrix_normalizer(t)
 
 def renormalize(matrices):
+    """
+    Renormalizes a list of transfer matrices. This renormalization
+    method uses bond-moving operation first, then applies decimation.
+    Parameters:
+    matrices (list): A list of matrices.
+    Returns:
+    list: A list of renormalized matrices.
+    """
+    
+    # Note that the seed is fixed for reproducibility
     np.random.seed(19)
+
     N = len(matrices)
     renormalized = []
     for k in range(N):
         
+        # Randomly select 27 matrices:
+        # b^(d-1) matrices for b=3 and d=3
         random = []
         for _ in range(27):
             i = np.random.randint(1, N)
             random.append(matrices[i])
 
-        # Renormalize
+        # Bond moving operation
         bm1 = bond_moving(random[:9])
         bm2 = bond_moving(random[9:18])
         bm3 = bond_moving(random[18:])
+        
+        # Decimation operation
         dm = decimation([bm1, bm2, bm3])
+
+        # Append the renormalized matrix to the list
         renormalized.append(dm)
     
     return renormalized
 
-def transfer_matrix_counter(matrices): # mpmath
+def transfer_matrix_counter(matrices):
+    """
+    Counts the number of occurrences of different types of transfer matrices.
+    Parameters:
+    matrices (list): A list of matrices.
+    Returns:
+    tuple: A tuple containing the count of ferro, aferro, disorder, and outofsink transfer matrices.
+    """
+
     zero, one = 0.0001, 0.9999
     ferro, aferro, disorder, outofsink = 0, 0, 0, 0
     
@@ -80,6 +158,16 @@ def transfer_matrix_counter(matrices): # mpmath
     return ferro, aferro, disorder, outofsink
 
 def phase_sink(interaction, aferro_concentration, lattice_size, search):
+    """
+    Determines the phase of a system based on the given parameters.
+    Parameters:
+    interaction (float): The interaction strength between spins.
+    aferro_concentration (float): The concentration of antiferromagnetic spin interactions.
+    lattice_size (int): The size of the lattice.
+    search (str): The phase to search for ('disorder' or 'ferro').
+    Returns:
+    tuple: A tuple containing the number of iterations performed (k) and the determined phase of the system.
+    """
 
     limsup = 0.95 * lattice_size
     liminf = 0.05 * lattice_size
@@ -87,20 +175,10 @@ def phase_sink(interaction, aferro_concentration, lattice_size, search):
     matrices = transfer_matrices(lattice_size, interaction, aferro_concentration)
     phase = "undetermined"
     
-    #k = 0
-    #while phase == "undetermined":
-    #    k += 1
-    #    matrices = renormalize(matrices)
-    #    ferro, aferro, disorder, outofsink = transfer_matrix_counter(matrices)
-        
-    #    if disorder > limsup and outofsink < liminf:
-    #        phase = "disorder"
-    #    if disorder < liminf and outofsink < liminf:
-    #        phase = "spin-glass"
-
+    # Iterate through the renormalization process
     for k in range(1, 30):
         matrices = renormalize(matrices)
-        ferro, aferro, disorder, outofsink = transfer_matrix_counter(matrices)
+        ferro, _, disorder, outofsink = transfer_matrix_counter(matrices)
 
         if disorder > limsup and outofsink < liminf:
             phase = 'disorder'
