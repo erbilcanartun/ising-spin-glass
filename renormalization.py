@@ -151,14 +151,16 @@ def renormalize(matrices, method='bd'):
                 i = np.random.randint(1, N)
                 random.append(matrices[i])
 
-            # Bond moving operation
-            bm1 = bond_moving(random[:9])
-            bm2 = bond_moving(random[9:18])
-            bm3 = bond_moving(random[18:])
             # Decimation operation
-            dm = decimation([bm1, bm2, bm3])
+            dm = []
+            for i in range(0, len(random)-1, 3):
+                dm.append(decimation(random[i:i+3]))
+
+            # Bond moving operation
+            r = bond_moving(dm)
+            
             # Append the renormalized matrix to the list
-            renormalized.append(dm)
+            renormalized.append(r)
     
     return renormalized
 
