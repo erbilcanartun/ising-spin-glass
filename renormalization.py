@@ -316,6 +316,3 @@ def critical_point(temparature, aferro_concentration, lattice_size, tolerance, s
     print()
     print(f"Critical point = {critical_point}")
     return critical_point
-
-
-
