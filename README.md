@@ -1,6 +1,6 @@
 # Spin-1/2 Ising Spin Glass (3D)
 
-This repository presents a demonstration of global phase diagram calculations using renormalization-group theory for spin$-1/2$ Ising spin glasses in three spatial dimensions. The calculations are performed exactly on a three-dimensional hierarchical model and, in parallel, using the Migdal-Kadanoff approximation on the cubic lattice.
+This repository presents a demonstration of global phase diagram calculations using renormalization-group theory for spin-1/2 Ising spin glasses in three spatial dimensions. The calculations are performed exactly on a three-dimensional hierarchical model and, in parallel, using the Migdal-Kadanoff approximation on the cubic lattice.
 
 The renormalization process can be implemented in two ways: either applying a bond-moving operation followed by decimation (bd), or performing decimation first, then bond-moving (db). Both methods are included in this project. Therefore, the only distinction between files labeled 'bd' and 'db' lies in the renormalization technique employed. The sole observable consequence of this difference is the scaling of the critical temperatures.
 
@@ -30,11 +30,16 @@ The renormalization group (RG) is a powerful theoretical framework used to study
 
 The code in this repository calculates the phase diagram of the Ising spin glass model in three dimensions ($d=3$) using a renormalization-group approach.
 
-The spin$-1/2$ Ising model is defined by the Hamiltonian:  
-    -\beta \mathcal{H} = \sum_{\langle ij\rangle} {E(s_i,s_j)} = \sum_{\langle ij\rangle} {J_{ij} s_i s_j}
+The spin-1/2 Ising model is defined by the Hamiltonian:
 
-and the interactions are represented using a transfer matrix:  
-    $T(s_i,s_j) = e^{E(s_i,s_j)}$
+$$\begin{align}
+-\beta \mathcal{H} &= \sum_{\langle ij\rangle} {E(s_i,s_j)}  \\
+&= \sum_{\langle ij\rangle} {J_{ij} s_i s_j}
+\end{align}$$
+
+and the interactions are represented using a transfer matrix:
+
+$$T(s_i,s_j) = e^{E(s_i,s_j)}$$
 
 As the local renormalization-group transformation, the Migdal-Kadanoff approximate transformation and, equivalently, the exact transformation for the $d=3$ hierarchical lattice is used (Figure). The length rescaling factor of $b=3$ is used to preserve under renormalization group the ferromagnetic-antiferromagnetic symmetry of the system. This local transformation consists in bond moving followed by decimation.
 
