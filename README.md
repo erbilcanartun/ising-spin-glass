@@ -46,8 +46,8 @@ As the local renormalization-group transformation, the Migdal-Kadanoff approxima
 <div align="center">
   <img
     src="./images/renormalization.png"
-    alt="Candlestick Chart Example"
-    width="600"
+    alt="Renormalization Procedure"
+    width="500"
     title="Figure: (a) RG transformation for the
 length-rescaling factor of b=3. In this intuitive approximation, bond moving is followed by decimation. (b) Exact RG transformation of the d = 3, b = 3 hierarchical lattice for which the Migdal-Kadanoff RG recursion relations are exact. The construction of a hierarchical lattice proceeds in the opposite direction of its RG solution."
     style="border-radius: 10px; margin: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"
