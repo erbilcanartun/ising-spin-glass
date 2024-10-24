@@ -43,8 +43,16 @@ $$T(s_i,s_j) = e^{E(s_i,s_j)}$$
 
 As the local renormalization-group transformation, the Migdal-Kadanoff approximate transformation and, equivalently, the exact transformation for the $d=3$ hierarchical lattice is used (Figure). The length rescaling factor of $b=3$ is used to preserve under renormalization group the ferromagnetic-antiferromagnetic symmetry of the system. This local transformation consists in bond moving followed by decimation.
 
-![renormalization](images/renormalization.png "Figure: (a) RG transformation for the
-length-rescaling factor of b=3. In this intuitive approximation, bond moving is followed by decimation. (b) Exact RG transformation of the d = 3, b = 3 hierarchical lattice for which the Migdal-Kadanoff RG recursion relations are exact. The construction of a hierarchical lattice proceeds in the opposite direction of its RG solution.")
+<div align="center">
+  <img
+    src="./images/renormalization.png"
+    alt="Candlestick Chart Example"
+    width="600"
+    title="Figure: (a) RG transformation for the
+length-rescaling factor of b=3. In this intuitive approximation, bond moving is followed by decimation. (b) Exact RG transformation of the d = 3, b = 3 hierarchical lattice for which the Migdal-Kadanoff RG recursion relations are exact. The construction of a hierarchical lattice proceeds in the opposite direction of its RG solution."
+    style="border-radius: 10px; margin: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"
+  >
+</div>
 
 The quenched randomness is included by keeping, as a distribution, `lattice_size` sets of the nearest-neighbor interaction energies $E(s_i,s_j)$. At the beginning of each renormalization-group trajectory, this distribution is formed from the double-delta distribution characterized by interactions $\pm J$ with probabilities $p$, $(1−p)$. 
 
